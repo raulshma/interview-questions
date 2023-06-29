@@ -4,8 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/session";
 import { DashboardShell } from "@/components/shell";
-import { QuizItem } from "@/components/quiz-item";
-import { EmptyPlaceholder } from "@/components/empty-placeholder";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const metadata = {
   title: "Dashboard",
@@ -17,7 +17,7 @@ export default async function DashboardPage() {
   if (!user) {
     redirect(authOptions?.pages?.signIn || "/login");
   }
-  
+
   const quizzes = await db.quiz.findMany({
     select: {
       id: true,
@@ -30,26 +30,18 @@ export default async function DashboardPage() {
     },
   });
 
-  console.log(quizzes);
-
   return (
     <DashboardShell>
-      <div>
-        <div className="divide-y divide-border rounded-md border">
-          {quizzes.length ? (
-            quizzes.map((quiz) => <QuizItem key={quiz.id} quiz={quiz} />)
-          ) : (
-            <EmptyPlaceholder>
-              <EmptyPlaceholder.Icon name="post" />
-              <EmptyPlaceholder.Title>
-                0 Quizzes Available
-              </EmptyPlaceholder.Title>
-              <EmptyPlaceholder.Description>
-                No quizzes to take.
-              </EmptyPlaceholder.Description>
-            </EmptyPlaceholder>
-          )}
-        </div>
+      <div className="flex flex-col gap-5 justify-center align-middle items-center text-center text-lg">
+        <Link href="/dashboard/quizzes" className="w-full md:w-1/2 lg:w-1/3">
+          Quizzes
+        </Link>
+        <Link
+          href="/dashboard/leaderboard"
+          className="w-full md:w-1/2 lg:w-1/3"
+        >
+          Leaderboards
+        </Link>
       </div>
     </DashboardShell>
   );

@@ -90,6 +90,7 @@ model Leaderboard {
 model Quiz {
   id          String        @id @default(cuid()) @map("_id")
   title       String
+  description String
   validFrom   DateTime?
   validTo     DateTime?      
   createdAt   DateTime      @default(now()) @map(name: "created_at")

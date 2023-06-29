@@ -10,16 +10,18 @@ interface QuizItemProps {
 
 export function QuizItem({ quiz }: QuizItemProps) {
   return (
-    <div className="flex items-center justify-between p-4">
-      <div className="grid gap-1">
-        {quiz.title}
-        <div>
-          <p className="text-sm text-muted-foreground">
-            {formatDate(quiz.createdAt?.toDateString())}
-          </p>
+    <Link href={`/dashboard/quizzes/${quiz.id}`} prefetch={false}>
+      <div className="flex items-center justify-between p-4">
+        <div className="grid gap-1">
+          {quiz.title}
+          <div>
+            <p className="text-sm text-muted-foreground">
+              {formatDate(quiz.createdAt?.toDateString())}
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
