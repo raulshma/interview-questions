@@ -4,18 +4,9 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/session";
 import { DashboardShell } from "@/components/shell";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import { QuizForm } from "@/components/quiz-form";
 
 export const metadata = {
   title: "Quiz start",
@@ -40,7 +31,7 @@ export default async function QuizStartPage({ params }: QuizStartPageParams) {
     },
   });
 
-  if (!quiz) {
+  if (quiz == null)
     return (
       <Alert>
         <Terminal className="h-4 w-4" />
@@ -48,7 +39,17 @@ export default async function QuizStartPage({ params }: QuizStartPageParams) {
         <AlertDescription>We were not able to find the quiz.</AlertDescription>
       </Alert>
     );
-  }
 
-  return <DashboardShell>404</DashboardShell>;
+  const everyQuestionIdsForQuiz = await db.question.findMany({
+    where: {
+      quizId: quiz.id,
+    },
+    select: { id: true },
+  });
+
+  return (
+    <DashboardShell>
+      <QuizForm quizId={quiz.id} questionIds={everyQuestionIdsForQuiz} />
+    </DashboardShell>
+  );
 }

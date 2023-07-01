@@ -58,7 +58,8 @@ model User {
   stripeSubscriptionId   String?       @unique @map(name: "stripe_subscription_id")
   stripePriceId          String?       @map(name: "stripe_price_id")
   stripeCurrentPeriodEnd DateTime?     @map(name: "stripe_current_period_end")
-  leaderboards            Leaderboard[]
+  leaderboards           Leaderboard[]
+  userQuiz               UserQuiz[]
 
   @@map(name: "users")
 }
@@ -88,24 +89,52 @@ model Leaderboard {
 }
 
 model Quiz {
-  id          String        @id @default(cuid()) @map("_id")
-  title       String
-  description String
-  validFrom   DateTime?
-  validTo     DateTime?      
-  createdAt   DateTime      @default(now()) @map(name: "created_at")
-  updatedAt   DateTime      @default(now()) @map(name: "updated_at")
-  questions   Question[]
-  Leaderboard Leaderboard[]
+  id           String        @id @default(cuid()) @map("_id")
+  title        String
+  description  String
+  validFrom    DateTime?
+  validTo      DateTime?
+  createdAt    DateTime      @default(now()) @map(name: "created_at")
+  updatedAt    DateTime      @default(now()) @map(name: "updated_at")
+  questions    Question[]
+  leaderboards Leaderboard[]
+  userQuizzes  UserQuiz[]
 }
 
 model Question {
   id        String   @id @default(cuid()) @map("_id")
   text      String
-  options   String[]
-  answer    String
+  options   Option[]
   quiz      Quiz     @relation(fields: [quizId], references: [id])
   quizId    String
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @default(now()) @map(name: "updated_at")
+}
+
+model Option {
+  id          String     @id @default(cuid()) @map("_id")
+  text        String
+  type        OptionType @default(TEXT)
+  isAnswer    Boolean    @default(false)
+  explanation String?
+  questionId  String
+  question    Question?  @relation(fields: [questionId], references: [id])
+}
+
+model UserQuiz {
+  id      String @id @default(cuid()) @map("_id")
+  quizId  String
+  quiz    Quiz   @relation(fields: [quizId], references: [id])
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+  answers Json
+
+  startedOn DateTime @default(now()) @map(name: "started_on")
+  endedOn   DateTime @default(now()) @map(name: "ended_on")
+}
+
+enum OptionType {
+  TEXT
+  CODE
+  INT
 }
