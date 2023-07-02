@@ -45,6 +45,7 @@ export default async function QuizStartPage({ params }: QuizStartPageParams) {
       quizId: quiz.id,
     },
     select: { id: true },
+    take: 10,
   });
 
   let userQuizId = "";
