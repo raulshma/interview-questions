@@ -47,9 +47,47 @@ export default async function QuizStartPage({ params }: QuizStartPageParams) {
     select: { id: true },
   });
 
+  let userQuizId = "";
+
+  if (everyQuestionIdsForQuiz.length > 0) {
+    const alreadyTaken = await db.userQuiz.findFirst({
+      where: {
+        quizId: quiz.id,
+        userId: user.id,
+        endedOn: undefined,
+      },
+      select: {
+        id: true,
+        startedOn: true,
+      },
+    });
+
+    if (alreadyTaken !== null && alreadyTaken.id) {
+      console.info("Repeated quiz - %o", alreadyTaken);
+      userQuizId = alreadyTaken.id;
+    } else {
+      const userQuiz = await db.userQuiz.create({
+        data: {
+          quizId: quiz.id,
+          userId: user.id,
+          answers: [],
+          startedOn: new Date(),
+        },
+      });
+      if (userQuiz !== null && userQuiz.id) {
+        console.info("Created new quiz - %o", userQuiz);
+        userQuizId = userQuiz.id;
+      }
+    }
+  }
+
   return (
     <DashboardShell>
-      <QuizForm quizId={quiz.id} questionIds={everyQuestionIdsForQuiz} />
+      <QuizForm
+        quizId={quiz.id}
+        userQuizId={userQuizId}
+        questionIds={everyQuestionIdsForQuiz}
+      />
     </DashboardShell>
   );
 }

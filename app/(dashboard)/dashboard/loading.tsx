@@ -8,8 +8,6 @@ export default function DashboardLoading() {
         <QuizItem.Skeleton />
         <QuizItem.Skeleton />
         <QuizItem.Skeleton />
-        <QuizItem.Skeleton />
-        <QuizItem.Skeleton />
       </div>
     </DashboardShell>
   );

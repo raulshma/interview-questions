@@ -7,9 +7,6 @@ export default function QuizStartLoading() {
       <div className="divide-border-200 divide-y rounded-md border">
         <QuizItem.Skeleton />
         <QuizItem.Skeleton />
-        <QuizItem.Skeleton />
-        <QuizItem.Skeleton />
-        <QuizItem.Skeleton />
       </div>
     </DashboardShell>
   );
