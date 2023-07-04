@@ -20,6 +20,7 @@ import { Skeleton } from "./ui/skeleton";
 import { AnswerCheckRequest } from "@/app/api/questions/answer/route";
 import { toast } from "./ui/use-toast";
 import { Badge } from "./ui/badge";
+import { useRouter } from "next/navigation";
 
 const emptyArray = [1, 2, 3, 4];
 
@@ -40,6 +41,7 @@ export function QuizForm({
   questionIds,
   ...props
 }: QuizFormProps) {
+  const router = useRouter();
   const [usedQuestionIds, setUsedQuestionIds] = useState<string[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<QuestionWithOptions>();
   const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
@@ -69,7 +71,6 @@ export function QuizForm({
     const randomQuestionId = getRandomId(questionIds);
     if (questionIds.length === usedQuestionIds.length) {
       await getResult(userQuizId);
-      setShowResult(true);
       return setIsLoading(false);
     }
     if (usedQuestionIds.includes(randomQuestionId)) {
@@ -120,6 +121,9 @@ export function QuizForm({
   }
 
   async function getResult(userQuizId: string) {
+    router.push(`/dashboard/quizzes/result/${userQuizId}`);
+    return;
+    setShowResult(true);
     const result = await GET<number>(UserQuizResultPath, userQuizId);
     if (!isNaN(result) && result != -1) {
       setQuizResult(result);

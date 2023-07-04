@@ -31,11 +31,19 @@ export async function GET(
         userId: userId,
       },
       select: {
+        id: true,
         answers: true,
       },
     });
 
     if (userQuiz !== null) {
+      await db.userQuiz.update({
+        data: { endedOn: new Date() },
+        where: {
+          id: userQuiz.id,
+        },
+      });
+
       const answersArray = userQuiz.answers as Prisma.JsonArray;
       let correctAnswers = 0;
       answersArray.forEach((i) => {

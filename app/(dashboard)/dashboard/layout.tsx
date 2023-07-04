@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { getCurrentUser } from "@/lib/session";
 import { UserAccountNav } from "@/components/user-account-nav";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;
@@ -27,6 +28,7 @@ export default async function DashboardLayout({
               email: user.email,
             }}
           />
+          <ThemeToggle />
         </div>
       </header>
       <div className="container grid flex-1 gap-12">

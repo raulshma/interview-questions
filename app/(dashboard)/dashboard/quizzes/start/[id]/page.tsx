@@ -6,7 +6,19 @@ import { getCurrentUser } from "@/lib/session";
 import { DashboardShell } from "@/components/shell";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
-import { QuizForm } from "@/components/quiz-form";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import QuizStartCancelAction from "@/components/quiz-start-cancel";
+import QuizStartConfirmAction from "@/components/quiz-start-confirm";
 
 export const metadata = {
   title: "Quiz start",
@@ -40,55 +52,43 @@ export default async function QuizStartPage({ params }: QuizStartPageParams) {
       </Alert>
     );
 
-  const everyQuestionIdsForQuiz = await db.question.findMany({
+  const userQuiz = await db.userQuiz.findFirst({
     where: {
       quizId: quiz.id,
+      userId: user.id,
+      endedOn: undefined,
     },
-    select: { id: true },
-    take: 10,
+    select: {
+      id: true,
+      startedOn: true,
+    },
   });
 
-  let userQuizId = "";
-
-  if (everyQuestionIdsForQuiz.length > 0) {
-    const alreadyTaken = await db.userQuiz.findFirst({
-      where: {
-        quizId: quiz.id,
-        userId: user.id,
-        endedOn: undefined,
-      },
-      select: {
-        id: true,
-        startedOn: true,
-      },
-    });
-
-    if (alreadyTaken !== null && alreadyTaken.id) {
-      console.info("Repeated quiz - %o", alreadyTaken);
-      userQuizId = alreadyTaken.id;
-    } else {
-      const userQuiz = await db.userQuiz.create({
-        data: {
-          quizId: quiz.id,
-          userId: user.id,
-          answers: [],
-          startedOn: new Date(),
-        },
-      });
-      if (userQuiz !== null && userQuiz.id) {
-        console.info("Created new quiz - %o", userQuiz);
-        userQuizId = userQuiz.id;
-      }
-    }
-  }
+  const alreadyTaken = userQuiz && userQuiz.id;
 
   return (
     <DashboardShell>
-      <QuizForm
-        quizId={quiz.id}
-        userQuizId={userQuizId}
-        questionIds={everyQuestionIdsForQuiz}
-      />
+      <AlertDialog defaultOpen={true}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {alreadyTaken ? "Overwrite" : "Confirm"}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {alreadyTaken
+                ? `You have already taken this quiz on ${userQuiz.startedOn.toLocaleString()}, starting this quiz now will overwrite the existing one.`
+                : "Are you sure you want to start the quiz now, you can come back later after finishing to try again."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <QuizStartCancelAction />
+            <QuizStartConfirmAction
+              path="/dashboard/quizzes/active"
+              id={params.id}
+            />
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DashboardShell>
   );
 }

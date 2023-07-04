@@ -4,10 +4,16 @@ export const QuestionAnswerPath = QuestionsPath + "/answer";
 export const UserQuizPath = ApiPath + "user-quiz";
 export const UserQuizResultPath = UserQuizPath + "/result";
 
-export async function GET<T>(path: string, id: string) {
-  const url = id ? `${path}/${id}` : path;
-
-  const response = await fetch(url);
+export async function GET<T>(path: string, id: string, host?: string | null) {
+  let url = id ? `${path}/${id}` : path;
+  if (host) {
+    url = `https://${host}${url}`;
+    if (process.env.NODE_ENV === "development") {
+      url = url.replace("https", "http");
+    }
+  }
+  console.log(url);
+  const response = await fetch(url, { next: { revalidate: 10 } });
   if (response.ok) {
     return (await response.json()) as T;
   }

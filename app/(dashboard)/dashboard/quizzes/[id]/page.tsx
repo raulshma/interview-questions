@@ -67,21 +67,23 @@ export default async function QuizPage({ params }: QuizPageParams) {
           </CardHeader>
           {quiz.validFrom && (
             <CardContent className="font-mono text-sm">
-              <p>
-                Starts - <span>{quiz.validFrom.toLocaleString()}</span>
-              </p>
+              <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
+                {quiz.validFrom < new Date() ? "Started" : "Starts"} -{" "}
+                <span>{quiz.validFrom.toLocaleString()}</span>
+              </code>
               {quiz.validTo && (
-                <p>
-                  Ends - <span>{quiz.validTo.toLocaleString()}</span>
+                <p className="text-sm text-muted-foreground">
+                  {quiz.validTo < new Date() ? "Ended" : "Ends"} -{" "}
+                  <span>{quiz.validTo.toLocaleString()}</span>
                 </p>
               )}
             </CardContent>
           )}
           <CardFooter className="font-mono font-thin text-xs block">
-            <p>
+            <p className="text-sm text-muted-foreground">
               Created - <span>{quiz.createdAt.toLocaleDateString()}</span>
             </p>
-            <p>
+            <p className="text-sm text-muted-foreground">
               Last update - <span>{quiz.updatedAt.toLocaleDateString()}</span>
             </p>
           </CardFooter>

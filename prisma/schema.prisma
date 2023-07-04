@@ -74,16 +74,16 @@ model VerificationToken {
 }
 
 model Leaderboard {
-  id    String @id @default(cuid()) @map("_id")
-  score Int
-
-  quizId String
-  quiz   Quiz   @relation(fields: [quizId], references: [id])
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  id       String @id @default(cuid()) @map("_id")
+  score    Int
+  maxScore Int
+  quizId   String
+  quiz     Quiz   @relation(fields: [quizId], references: [id])
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @map(name: "updated_at")
+  updatedAt DateTime? @map(name: "updated_at")
 
   @@map(name: "leaderboards")
 }
@@ -122,15 +122,15 @@ model Option {
 }
 
 model UserQuiz {
-  id      String @id @default(cuid()) @map("_id")
-  quizId  String
-  quiz    Quiz   @relation(fields: [quizId], references: [id])
-  userId  String
-  user    User   @relation(fields: [userId], references: [id])
-  answers Json
-
-  startedOn DateTime @default(now()) @map(name: "started_on")
-  endedOn   DateTime @default(now()) @map(name: "ended_on")
+  id            String    @id @default(cuid()) @map("_id")
+  quizId        String
+  quiz          Quiz      @relation(fields: [quizId], references: [id])
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  answers       Json
+  totalQuestion Int
+  startedOn     DateTime  @default(now()) @map(name: "started_on")
+  endedOn       DateTime? @map(name: "ended_on")
 }
 
 enum OptionType {
